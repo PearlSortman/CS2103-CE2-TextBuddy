@@ -99,7 +99,7 @@ public class CE2 {
 	}
 
 	@SuppressWarnings("resource")
-	private static String[] getFileAsArray() throws IOException {
+	public static String[] getFileAsArray() throws IOException {
 		BufferedReader tempBufferedReader = new BufferedReader(new FileReader(
 				fileName));
 		String lineInFile;
@@ -240,16 +240,20 @@ public class CE2 {
 	/*
 	 * search for a word in the file and return the lines containing that word
 	 */
-	private static void search(String searchByString) throws IOException {
+	public static String[] search(String searchByString) throws IOException {
 		// TODO
+		String[] filteredArray = new String[100];
+		return filteredArray;
 	}
 
 	/*
 	 * sorts the output lines alphabetically store current file as array, one
 	 * index per line clear file sort array re-add all lines in sorted order
 	 */
-	private static void sort() throws IOException {
+	public static String[] sort() throws IOException {
 		// TODO
+		String[] sortedArray = new String[100];
+		return sortedArray;
 	}
 
 	private static Boolean checkIfEmpty() throws IOException {
