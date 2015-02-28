@@ -261,9 +261,21 @@ public class CE2 {
 	 * index per line clear file sort array re-add all lines in sorted order
 	 */
 	public static String[] sort() throws IOException {
-		// TODO
-		String[] sortedArray = new String[100];
-		return sortedArray;
+		String[] tempArray = null;
+		if (checkIfEmpty()) {
+			printMessage(MESSAGE_EMPTY, fileName, null);
+		} else {
+			tempArray = getFileAsArray();
+			isSubMethod = true;
+			clear();
+			Arrays.sort(tempArray);
+			for (int i = 0; i < tempArray.length; i++) {
+				add(tempArray[i]);
+			}
+			isSubMethod = false;
+			printMessage(MESSAGE_SORTED, fileName, null);
+		}
+		return tempArray;
 	}
 
 	private static Boolean checkIfEmpty() throws IOException {
