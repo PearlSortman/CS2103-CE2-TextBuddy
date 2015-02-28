@@ -1,14 +1,22 @@
-/**
+/*****************************************************
+ * 
  * Name: Pearl Sortman
  * Matric Number: A0135005
  * Course: CS2103 Software Engineering
+ * Tutorial Group: T13
  * 
  * Assignment: CE2 TextBuddy++
  * 
- * Application Description: ....
+ * Application Description:
+ * Text editor supports the following functions:
+ * 	add (String)
+ * 	delete (int)
+ * 	clear
+ * 	sort
+ * 	search (String)
+ * 	exit
  * 
- * 
- **/
+ ******************************************************/
 
 package main;
 
@@ -24,43 +32,47 @@ public class CE2 {
 
 	public static File file;
 	public static String fileName;
+
+	// controls execution of printMessage in add() and clear()
 	public static boolean isSubMethod = false;
 
-	public static final String MESSAGE_WELCOME = "Welcome to TextBuddy. "
-			+ file + " is ready for use";
-	public static final String MESSAGE_CLEARED = "all content deleted from "
-			+ fileName;
-	public static final String MESSAGE_ADDED = "";
-	public static final String COMMAND_PROMPT = "command: ";
-	public static final String ARGUMENT_ERROR = "Please enter a valid argument for the specified command.";
+	public static final String MESSAGE_WELCOME = "Welcome to TextBuddy. %1$s is ready for use";
+	public static final String MESSAGE_CLEARED = "all content deleted from %1$s";
+	public static final String MESSAGE_ADDED = "added to %1$s: \"%2$s\"";
+	public static final String MESSAGE_DELETED = "deleted from %1$s: \"%2$s\"";
+	public static final String MESSAGE_SORTED = "%1$s has been sorted alphabetically";
+	public static final String MESSAGE_EMPTY = "%1$s is empty";
+	public static final String ARGUMENT_ERROR = "Please enter a valid argument for the %1$s command.";
 	public static final String COMMAND_ERROR = "Please enter a valid command.";
 
-	public static void main(String[] args) throws IOException { // Takes file
-																// name as
-																// parameter
-																// upon
-																// execution in
-																// command line
+	/*
+	 * upon execution, takes file name as parameter in command line loops
+	 * continuously after each command to accept another proceeds till exit
+	 * command entered
+	 */
+	public static void main(String[] args) throws IOException {
 		file = new File(args[0]);
 		fileName = args[0];
 		checkIfExists();
 		initializeReaderWriter();
-		printMessage(MESSAGE_WELCOME);
-
-		while (true) { // loops through after completing each command to accept
-						// another command
+		printMessage(MESSAGE_WELCOME, fileName, null);
+		while (true) {
 			String[] inputArray = getInputArray();
 			String command = inputArray[0];
 			executeCommand(command, inputArray);
+			isSubMethod = false;
 		}
 	}
 
 	/*
-	 * Collects user input using java scanner util Adds all input to new Array
-	 * Grabs command from first string in input Parses remaining input if any
+	 * collects user input using java scanner util 
+	 * adds all input to new Array
+	 * grabs command from first string in input
+	 * parses remaining input, if any
+	 * assumes the input will never be completely blank
 	 */
 	private static String[] getInputArray() {
-		printMessage(COMMAND_PROMPT);
+		System.out.print("command: ");
 		Scanner lines = new Scanner(System.in);
 		Scanner tokens = new Scanner(lines.nextLine());
 		List<String> input = new ArrayList<String>();
@@ -71,43 +83,9 @@ public class CE2 {
 		return inputArray;
 	}
 
-	// Executes given command and checks for argument validity
-	private static void executeCommand(String command, String[] inputArray)
-			throws IOException {
-		if (command.equals("display")) { // DISPLAY
-			display();
-		} else if (command.equals("clear")) { // CLEAR
-			clear();
-		} else if (command.equals("sort")) { // SORT
-			sort();
-		} else if (command.equals("add")) { // ADD
-			String addText = getInputArgsString(inputArray);
-			if (addText != null) {
-				add(addText);
-			} else {
-				printMessage(ARGUMENT_ERROR);
-			}
-		} else if (command.equals("delete")) { // DELETE
-			if (inputArray[1] != null) {
-				int deleteLine = Integer.parseInt(inputArray[1]);
-				delete(deleteLine);
-			} else {
-				printMessage(ARGUMENT_ERROR);
-			}
-		} else if (command.equals("search")) { // SEARCH
-			String searchString = getInputArgsString(inputArray);
-			if (searchString != null) {
-				search(searchString);
-			} else {
-				printMessage(ARGUMENT_ERROR);
-			}
-		} else if (command.equals("exit")) { // EXIT
-			System.exit(0);
-		} else { // ANYTHING ELSE
-			printMessage(COMMAND_ERROR);
-		}
-	}
-
+	/*
+	 * parses user input returning as an array command will always be at 0 index
+	 */
 	private static String getInputArgsString(String[] inputArray) {
 		if (inputArray[1] != null) {
 			String inputArgsString = inputArray[1];
@@ -118,96 +96,6 @@ public class CE2 {
 		} else {
 			return null;
 		}
-	}
-
-	private static void printMessage(String message) {
-		System.out.println(message);
-	}
-
-	// Search for a word in the file and return the lines containing that word
-	private static void search(String searchByString) {
-
-	}
-
-	// Sorts the output lines alphabetically
-	@SuppressWarnings("unused")
-	private static void sort() throws IOException {
-		isSubMethod = true; // ensures print statement in clear() will not
-							// execute
-		String[] tempArray = getFileAsArray();
-		clear();
-		Arrays.sort(tempArray);
-		for (int i = 0; i < tempArray.length; i++) {
-			add(tempArray[i]);
-		}
-	}
-
-	// If file called does not exist OR text file is a directory it creates new
-	private static void checkIfExists() throws FileNotFoundException,
-			UnsupportedEncodingException {
-		if (!file.exists() || file.isDirectory()) {
-			createFile();
-		} else {
-			// proceed with specified file
-		}
-	}
-
-	private static void initializeReaderWriter() throws IOException {
-		printWriter = new PrintWriter(fileName);
-		bufferedWriter = new BufferedWriter(new FileWriter(fileName, true));
-		bufferedReader = new BufferedReader(new FileReader(fileName));
-	}
-
-	private static void createFile() throws FileNotFoundException,
-			UnsupportedEncodingException {
-		printWriter = new PrintWriter(fileName);
-	}
-
-	private static void display() throws IOException {
-		bufferedReaderDisplay = new BufferedReader(new BufferedReader(
-				new FileReader(fileName)));
-		int lineNumber = 1;
-		String line;
-		if ((line = bufferedReaderDisplay.readLine()) == null) {
-			System.out.println(fileName + " is empty");
-		} else {
-			System.out.println(lineNumber + ". " + line);
-			lineNumber++;
-			while ((line = bufferedReaderDisplay.readLine()) != null) {
-				System.out.println(lineNumber + ". " + line);
-				lineNumber++;
-			}
-		}
-	}
-
-	private static void add(String addText) throws IOException {
-		try {
-			bufferedWriter.append(addText);
-			bufferedWriter.newLine();
-			bufferedWriter.flush();
-			if (!isSubMethod) {
-				System.out.println("added to " + fileName + ": \"" + addText
-						+ "\"");
-			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
-	}
-
-	private static void delete(int deleteLineNum) throws IOException {
-		isSubMethod = true; // ensures print statement in clear() will not
-							// execute
-		String[] stringArr = getFileAsArray();
-		clear();
-		isSubMethod = true;
-		for (int i = 0; i < deleteLineNum - 1; i++) {
-			add(stringArr[i]);
-		}
-		for (int i = deleteLineNum; i < stringArr.length; i++) {
-			add(stringArr[i]);
-		}
-		System.out.println("deleted from " + fileName + " \""
-				+ stringArr[deleteLineNum - 1] + "\"");
 	}
 
 	@SuppressWarnings("resource")
@@ -223,14 +111,167 @@ public class CE2 {
 		return arrayOfLines;
 	}
 
+	/*
+	 * executes given command and checks for argument validity
+	 */
+	private static void executeCommand(String command, String[] inputArray)
+			throws IOException {
+		if (command.equals("display")) { // DISPLAY
+			display();
+		} else if (command.equals("clear")) { // CLEAR
+			clear();
+		} else if (command.equals("sort")) { // SORT
+			sort();
+		} else if (command.equals("add")) { // ADD
+			String addText = getInputArgsString(inputArray);
+			if (addText != null) {
+				add(addText);
+			} else {
+				printMessage(ARGUMENT_ERROR, "add", null);
+			}
+		} else if (command.equals("delete")) { // DELETE
+			if (inputArray[1] != null) {
+				int deleteLine = Integer.parseInt(inputArray[1]);
+				delete(deleteLine);
+			} else {
+				printMessage(ARGUMENT_ERROR, "delete", null);
+			}
+		} else if (command.equals("search")) { // SEARCH
+			String searchString = getInputArgsString(inputArray);
+			if (searchString != null) {
+				search(searchString);
+			} else {
+				printMessage(ARGUMENT_ERROR, "search", null);
+			}
+		} else if (command.equals("exit")) { // EXIT
+			System.exit(0);
+		} else { // ANYTHING ELSE
+			printMessage(COMMAND_ERROR, null, null);
+		}
+	}
+
+	/*
+	 * if file called does not exist OR text file is a directory it creates new
+	 */
+	private static void checkIfExists() throws FileNotFoundException,
+			UnsupportedEncodingException {
+		if (!file.exists() || file.isDirectory()) {
+			createFile();
+		}
+	}
+
+	private static void createFile() throws FileNotFoundException,
+			UnsupportedEncodingException {
+		printWriter = new PrintWriter(fileName);
+	}
+
+	private static void initializeReaderWriter() throws IOException {
+		printWriter = new PrintWriter(fileName);
+		bufferedWriter = new BufferedWriter(new FileWriter(fileName, true));
+		bufferedReader = new BufferedReader(new FileReader(fileName));
+	}
+
+	/*
+	 * prints file in current state (results after latest command has executed)
+	 * handles printing of line numbers checks if content is empty
+	 */
+	private static void display() throws IOException {
+		if (checkIfEmpty()) {
+			printMessage(MESSAGE_EMPTY, fileName, null);
+		} else {
+			String[] tempArray = getFileAsArray();
+			int lineNumber = 1;
+			for (int i = 0; i < tempArray.length; i++) {
+				System.out.println(lineNumber + ". " + tempArray[i]);
+				lineNumber++;
+			}
+		}
+	}
+
+	private static void add(String addText) throws IOException {
+		bufferedWriter.append(addText);
+		bufferedWriter.newLine();
+		bufferedWriter.flush();
+		if (!isSubMethod) {
+			printMessage(MESSAGE_ADDED, fileName, addText);
+		}
+	}
+
+	/*
+	 * checks to ensure line to delete exists in file checks to ensure file not
+	 * empty saves current file as array, storing each line as seperate index
+	 * clears current file re-adds all lines up until the deleted line is
+	 * reached skips deleted line re-adds all lines following deleted line
+	 */
+	private static void delete(int deleteLineNum) throws IOException {
+		String[] stringArr = getFileAsArray();
+		if (checkIfEmpty()) {
+			printMessage(MESSAGE_EMPTY, fileName, null);
+		} else if (deleteLineNum > stringArr.length) {
+			printMessage(ARGUMENT_ERROR, "delete", null);
+		} else {
+			isSubMethod = true;
+			clear();
+			for (int i = 0; i < deleteLineNum - 1; i++) {
+				add(stringArr[i]);
+			}
+			for (int i = deleteLineNum; i < stringArr.length; i++) {
+				add(stringArr[i]);
+			}
+			printMessage(MESSAGE_DELETED, fileName,
+					stringArr[deleteLineNum - 1]);
+			isSubMethod = false;
+		}
+	}
+
+	/*
+	 * clears file by deleting current and creating new with same name only
+	 * prints message if clear command was executed by user as direct command
+	 */
 	private static void clear() throws IOException {
 		file.delete();
 		createFile();
 		initializeReaderWriter();
 		if (!isSubMethod) {
-			printMessage(MESSAGE_CLEARED);
+			printMessage(MESSAGE_CLEARED, fileName, null);
 		}
-		isSubMethod = false;
+	}
+
+	/*
+	 * search for a word in the file and return the lines containing that word
+	 */
+	private static void search(String searchByString) throws IOException {
+		// TODO
+	}
+
+	/*
+	 * sorts the output lines alphabetically store current file as array, one
+	 * index per line clear file sort array re-add all lines in sorted order
+	 */
+	private static void sort() throws IOException {
+		// TODO
+	}
+
+	private static Boolean checkIfEmpty() throws IOException {
+		if ((getFileAsArray()).length < 1) {
+			return true; // file is empty
+		}
+		return false; // file has content
+	}
+
+	/*
+	 * printMessage will customize output strings as defined as final class
+	 * variables
+	 */
+	private static void printMessage(String message, String unique1,
+			String unique2) {
+		if (unique1 != null && unique2 != null) {
+			System.out.println(String.format(message, unique1, unique2));
+		} else if (unique1 != null && unique2 == null) {
+			System.out.println(String.format(message, unique1));
+		} else {
+			System.out.println(message);
+		}
 	}
 
 }
