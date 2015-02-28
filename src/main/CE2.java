@@ -241,9 +241,19 @@ public class CE2 {
 	 * search for a word in the file and return the lines containing that word
 	 */
 	public static String[] search(String searchByString) throws IOException {
-		// TODO
-		String[] filteredArray = new String[100];
-		return filteredArray;
+		String[] tempArray = getFileAsArray();
+		if (checkIfEmpty()) {
+			printMessage(MESSAGE_EMPTY, fileName, null);
+		} else {
+			int lineNumber = 1;
+			for (int i = 0; i < tempArray.length; i++) {
+				if (tempArray[i].contains(searchByString)) {
+					System.out.println(lineNumber + ". " + tempArray[i]);
+				}
+				lineNumber++;
+			}
+		}
+		return tempArray;
 	}
 
 	/*
