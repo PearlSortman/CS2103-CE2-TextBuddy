@@ -65,10 +65,8 @@ public class CE2 {
 	}
 
 	/*
-	 * collects user input using java scanner util 
-	 * adds all input to new Array
-	 * grabs command from first string in input
-	 * parses remaining input, if any
+	 * collects user input using java scanner util adds all input to new Array
+	 * grabs command from first string in input parses remaining input, if any
 	 * assumes the input will never be completely blank
 	 */
 	private static String[] getInputArray() {
